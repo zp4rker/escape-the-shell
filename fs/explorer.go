@@ -3,11 +3,11 @@ package fs
 var CurrentDir = &root
 var Path []*Directory
 
-var root = newDir("root", []Unit{
+var root = newDir("root", &[]Unit{
 	newFile("test", "this is the content"),
 	newFile("test2", "this is the content"),
-	newDir("test_dir", []Unit{
-		newDir("another_dir", []Unit{
+	newDir("test_dir", &[]Unit{
+		newDir("another_dir", &[]Unit{
 			newFile("found_me", "congratulations!"),
 		}),
 	}),
@@ -15,7 +15,7 @@ var root = newDir("root", []Unit{
 
 func Find(name string) *Unit {
 	var search *Unit
-	for _, u := range CurrentDir.Contents {
+	for _, u := range *CurrentDir.Contents {
 		if u.Name() == name {
 			search = &u
 		}
@@ -41,6 +41,6 @@ func ChDir(d *Directory) {
 }
 
 func MkDir(name string) {
-	dir := newDir(name, []Unit{})
-	CurrentDir.Contents = append(CurrentDir.Contents, dir)
+	dir := newDir(name, &[]Unit{})
+	*CurrentDir.Contents = append(*CurrentDir.Contents, dir)
 }

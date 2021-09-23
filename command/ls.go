@@ -9,7 +9,7 @@ import (
 
 func handleLs(terminal *term.Terminal) error {
 	var output string
-	for _, u := range fs.CurrentDir.Contents {
+	for _, u := range *fs.CurrentDir.Contents {
 		output += u.Name() + "\n"
 	}
 	termio.Writeln(terminal, strings.TrimSpace(output))
