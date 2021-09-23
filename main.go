@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"strings"
+	"zp4rker.com/escape-the-shell/command"
+	"zp4rker.com/escape-the-shell/termio"
 )
 
 func main() {
@@ -24,15 +26,15 @@ func main() {
 		panic("Unable to set terminal size!")
 	}
 
-	writeLine(terminal, "Welcome to escape-the-shell!")
-	writeLine(terminal)
+	termio.Writeln(terminal, "Welcome to escape-the-shell!")
+	termio.Writeln(terminal)
 
 	shell: for {
 		input, err := terminal.ReadLine()
 		if err != nil {
 			if err == io.EOF {
 				terminal.SetPrompt("")
-				writeLine(terminal, "Exiting escape-the-shell now...")
+				termio.Writeln(terminal, "Exiting escape-the-shell now...")
 				break shell
 			}
 		}
@@ -41,31 +43,12 @@ func main() {
 		cmd := strings.ToLower(args[0])
 		args = args[1:]
 
-		switch cmd {
-		case "exit":
-			writeLine(terminal, "Exiting escape-the-shell now...")
-			break shell
-		default:
-			writeLine(terminal, "Unrecognised command:", cmd)
+		if err = command.Handle(terminal, cmd, args); err != nil {
+			if err == command.QuitRequest {
+				break shell
+			} else {
+				panic("Encountered an unexpected error!")
+			}
 		}
-	}
-}
-
-func writeLine(t *term.Terminal, strings ...string) {
-	strings = append(strings, "\n")
-	write(t, strings...)
-}
-
-func write(t *term.Terminal, strings ...string) {
-	var s string
-	if len(strings) > 0 {
-		s = strings[0]
-		for i := 1; i < len(strings); i++ {
-			s += " " + strings[i]
-		}
-	}
-
-	if _, err := t.Write([]byte(s)); err != nil {
-		panic("Failed to write to terminal!")
 	}
 }
