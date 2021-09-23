@@ -13,11 +13,20 @@ func main() {
 	}
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
+	width, height, err := term.GetSize(int(os.Stdin.Fd()))
+	if err != nil {
+		panic("Unable to get terminal size!")
+	}
+
 	terminal := term.NewTerminal(os.Stdin, "> ")
+	if err := terminal.SetSize(width, height); err != nil {
+		panic("Unable to set terminal size!")
+	}
+
 	writeLine(terminal, "Welcome to escape-the-shell!")
 	writeLine(terminal)
 
-	Shell: for {
+	shell: for {
 		input, err := terminal.ReadLine()
 		if err != nil {
 			panic("Failed to read user input!")
@@ -30,7 +39,7 @@ func main() {
 		switch cmd {
 		case "exit":
 			writeLine(terminal, "Exiting escape-the-shell now...")
-			break Shell
+			break shell
 		default:
 			writeLine(terminal, "Unrecognised command:", cmd)
 		}
