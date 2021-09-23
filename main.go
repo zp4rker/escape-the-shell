@@ -2,6 +2,7 @@ package main
 
 import (
 	"golang.org/x/term"
+	"io"
 	"os"
 	"strings"
 )
@@ -29,7 +30,11 @@ func main() {
 	shell: for {
 		input, err := terminal.ReadLine()
 		if err != nil {
-			panic("Failed to read user input!")
+			if err == io.EOF {
+				terminal.SetPrompt("")
+				writeLine(terminal, "Exiting escape-the-shell now...")
+				break shell
+			}
 		}
 
 		args := strings.Fields(input)
