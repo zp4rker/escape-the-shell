@@ -17,6 +17,8 @@ func Handle(terminal *term.Terminal, cmd string, args []string) error {
 		return handleCd(terminal, args)
 	case "mkdir":
 		return handleMkdir(terminal, args)
+	case "print":
+		return handlePrint(terminal, args)
 	default:
 		return handleUnrecognised(terminal, cmd)
 	}

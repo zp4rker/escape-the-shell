@@ -18,6 +18,7 @@ func Find(name string) *Unit {
 	for _, u := range *CurrentDir.Contents {
 		if u.Name() == name {
 			search = &u
+			break
 		}
 	}
 	return search

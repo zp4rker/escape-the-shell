@@ -9,7 +9,7 @@ func (f File) Name() string {
 	return f.name
 }
 
-func (f File) Contents() string {
+func (f File) Read() string {
 	return f.contents
 }
 

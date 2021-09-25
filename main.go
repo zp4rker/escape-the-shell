@@ -39,6 +39,10 @@ func main() {
 			}
 		}
 
+		if strings.TrimSpace(input) == "" {
+			continue
+		}
+
 		args := strings.Fields(input)
 		cmd := strings.ToLower(args[0])
 		args = args[1:]
