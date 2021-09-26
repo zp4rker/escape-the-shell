@@ -4,12 +4,12 @@ import (
 	"golang.org/x/term"
 	"strings"
 	"zp4rker.com/escape-the-shell/fs"
-	"zp4rker.com/escape-the-shell/termio"
+	"zp4rker.com/escape-the-shell/zterm"
 )
 
 func handleCd(terminal *term.Terminal, args []string) error {
 	if len(args) < 1 {
-		termio.Writeln(terminal, "You need to provide a directory to change to!")
+		zterm.Writeln(terminal, "You need to provide a directory to change to!")
 		return nil
 	}
 
@@ -25,12 +25,12 @@ func handleCd(terminal *term.Terminal, args []string) error {
 	dir := fs.Find(args[0])
 
 	if dir == nil {
-		termio.Writeln(terminal, "There is no directory named:", args[0])
+		zterm.Writeln(terminal, "There is no directory named:", args[0])
 		return nil
 	}
 	switch (*dir).(type) {
 	case fs.File:
-		termio.Writeln(terminal, "That's a file, not a directory!")
+		zterm.Writeln(terminal, "That's a file, not a directory!")
 	case fs.Directory:
 		d := (*dir).(fs.Directory)
 		fs.ChDir(&d)

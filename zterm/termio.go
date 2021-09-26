@@ -1,6 +1,8 @@
-package termio
+package zterm
 
-import "golang.org/x/term"
+import (
+	"golang.org/x/term"
+)
 
 func Writeln(t *term.Terminal, strings ...string) {
 	strings = append(strings, "\n")

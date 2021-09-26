@@ -1,58 +1,35 @@
 package main
 
-import (
-	"golang.org/x/term"
-	"io"
-	"os"
-	"strings"
-	"zp4rker.com/escape-the-shell/command"
-	"zp4rker.com/escape-the-shell/termio"
-)
+import "zp4rker.com/escape-the-shell/zterm"
 
 func main() {
-	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	terminal, cleanup, err := zterm.NewTerminal()
 	if err != nil {
-		panic("Encountered an error when initialising a term instance!")
+		panic("Unable to create terminal!")
 	}
-	defer term.Restore(int(os.Stdin.Fd()), oldState)
+	defer cleanup()
 
-	width, height, err := term.GetSize(int(os.Stdin.Fd()))
-	if err != nil {
-		panic("Unable to get terminal size!")
-	}
-
-	terminal := term.NewTerminal(os.Stdin, "> ")
-	if err := terminal.SetSize(width, height); err != nil {
-		panic("Unable to set terminal size!")
-	}
-
-	termio.Writeln(terminal, "Welcome to escape-the-shell!")
-	termio.Writeln(terminal)
-
+	terminal.Writeln("Press any key! Press 'x' to exit.")
 	shell: for {
-		input, err := terminal.ReadLine()
-		if err != nil {
-			if err == io.EOF {
-				terminal.SetPrompt("")
-				termio.Writeln(terminal, "Exiting escape-the-shell now...")
-				break shell
+		count, bytes := terminal.Read()
+		terminal.Writeln("Count:", count)
+		terminal.Write("Input: \"")
+		for i, b := range bytes {
+			if b == 0 {
+				continue
 			}
-		}
-
-		if strings.TrimSpace(input) == "" {
-			continue
-		}
-
-		args := strings.Fields(input)
-		cmd := strings.ToLower(args[0])
-		args = args[1:]
-
-		if err = command.Handle(terminal, cmd, args); err != nil {
-			if err == command.QuitRequest {
-				break shell
-			} else {
-				panic("Encountered an unexpected error!")
+			if i > 0 && i < len(bytes) - 1 {
+				terminal.Write(", ")
 			}
+			terminal.Write(string(b))
+		}
+		terminal.Writeln("\"")
+		terminal.Writeln("Input Raw:", bytes)
+		terminal.Writeln()
+
+		if count == 1 && string(bytes[0]) == "x" {
+			break shell
 		}
 	}
+	terminal.Writeln("Exiting now...")
 }

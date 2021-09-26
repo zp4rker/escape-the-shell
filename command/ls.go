@@ -4,7 +4,7 @@ import (
 	"golang.org/x/term"
 	"strings"
 	"zp4rker.com/escape-the-shell/fs"
-	"zp4rker.com/escape-the-shell/termio"
+	"zp4rker.com/escape-the-shell/zterm"
 )
 
 func handleLs(terminal *term.Terminal) error {
@@ -16,6 +16,6 @@ func handleLs(terminal *term.Terminal) error {
 		}
 		output += "\n"
 	}
-	termio.Writeln(terminal, strings.TrimSpace(output))
+	zterm.Writeln(terminal, strings.TrimSpace(output))
 	return nil
 }

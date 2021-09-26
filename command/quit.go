@@ -2,10 +2,10 @@ package command
 
 import (
 	"golang.org/x/term"
-	"zp4rker.com/escape-the-shell/termio"
+	"zp4rker.com/escape-the-shell/zterm"
 )
 
 func handleQuit(terminal *term.Terminal) error {
-	termio.Writeln(terminal, "Exiting escape-the-shell now...")
+	zterm.Writeln(terminal, "Exiting escape-the-shell now...")
 	return QuitRequest
 }
